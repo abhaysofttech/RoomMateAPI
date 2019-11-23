@@ -1,0 +1,5 @@
+{
+    "connectionString": "mongodb://localhost/roommate",
+    "secret": "nodeauthsecret",
+    "databaseName": "roommate"
+}
