@@ -10,17 +10,18 @@ const allowedOrigins = [
   'capacitor://localhost',
   'ionic://localhost',
   'http://localhost',
+  'http://localhost:4000',
   'http://localhost:8080',
   'http://localhost:8100'
 ];
 const options = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Origin not allowed by CORS'));
-    }
-  },
+  // origin: (origin, callback) => {
+  //   if (allowedOrigins.includes(origin) || !origin) {
+  //     callback(null, true);
+  //   } else {
+  //     callback(new Error('Origin not allowed by CORS'));
+  //   }
+  // },
   "Access-Control-Allow-Credentials": true,
 
   "Access-Control-Allow-Origin": '*',
@@ -34,17 +35,18 @@ app.use(bodyParser.json());
 
 
 // use JWT auth to secure the api
-//app.use(jwt());
-//app.use(passport.initialize());
+// app.use(jwt());
+// app.use(passport.initialize());
 
 // api routes
 app.use('/users', require('./users/users.controller'));
+app.use('/postads', require('./postads/postads.controller'));
 // global error handler
 app.use(errorHandler);
 
 
 // start server
-const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4001;
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
 const server = app.listen(port, function () {
   
  // console.log(process.env);

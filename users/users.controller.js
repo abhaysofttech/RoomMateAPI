@@ -7,8 +7,8 @@ const User = require('./users.model');
 
 //routes
 router.get('/', getAll);
-router.post('/register', register);
 router.post('/authenticate', authenticate);
+router.post('/register', register);
 router.get('/current', getCurrent);
 //router.get('/:id', getById);
 router.get('/:username', getByUsername);
