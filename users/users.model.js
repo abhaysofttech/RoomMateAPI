@@ -11,6 +11,8 @@ const UserSchema = new mongoose.Schema({
     userCity:{type:String, default:''},
     mobileverify: {type:String,default:true},
     date: {type:Date, default: Date.now},
+    dob: {type:Date, required: true},
+    userGender:{type:String, required: true}
 
     
 });

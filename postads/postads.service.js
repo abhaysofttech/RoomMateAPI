@@ -6,6 +6,9 @@ const PostAds = db.PostAds; // PostAds is a schema name in _helpers/db file
 module.exports = {
     newAds,
     getAds,
+    getAdsGender,
+    getMyAds,
+    getAdsDetails,
     updateAmenities,
     updateRent
 };
@@ -13,6 +16,17 @@ module.exports = {
 async function getAds() {
     console.log("Check ***************")
     return await PostAds.find().select('-hash');
+}
+async function getAdsGender(id) {
+    return await PostAds.find({gender:{$eq : id}});
+}
+
+async function getAdsDetails(id) {
+    return await PostAds.findById(id).select('-hash');
+}
+
+async function getMyAds(id) {
+    return await PostAds.find({phonenumber:{$eq : id}});
 }
 
 function newAds(adsDetail) {

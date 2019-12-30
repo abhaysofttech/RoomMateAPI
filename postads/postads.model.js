@@ -7,17 +7,20 @@ const PostAdsSchema = new mongoose.Schema({
     username: {type:String, required: true},
     gender: {type:String, required: true},
     marital: {type:String, required: true},
+    dob: {type:Date, required: true},
+    userGender:{type:String, required: true},
     roomType: {type:String, required: true},
     apparttype: {type:String, default: ''},
     bhkType: {type:String, required: true},
     gatedSecurity: {type:String, default: ''},
+    cooking: {type:String, required: true},
     vegNonveg: {type:String, required: true},
     bathroom: {type:String, required: true},
     balcony: {type:String, required: true},
     cupboard: {type:String, required: true},
 
-    rentAmount: {type:String, default: ''},
-    depositAmount: {type:String, default: ''},
+    rentAmount: {type:Number, default: ''},
+    depositAmount: {type:Number, default: ''},
     rentNegotiable: {type:Boolean, default:false},
 
 
