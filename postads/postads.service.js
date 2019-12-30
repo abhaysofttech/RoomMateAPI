@@ -16,6 +16,8 @@ module.exports = {
 async function getAds() {
     console.log("Check ***************")
     return await PostAds.find().select('-hash');
+    //db.getCollection('postads').find({phonenumber:{$eq : 9960732614},gender:{$eq : 'Female'}})
+    //db.getCollection('postads').find({rentAmount:{$gte : '2000',$lte:'4000'}})
 }
 async function getAdsGender(id) {
     return await PostAds.find({gender:{$eq : id}});
