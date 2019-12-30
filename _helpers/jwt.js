@@ -13,6 +13,9 @@ function jwt() {
             '/users',
             '/users/authenticate',
             '/postads/newads',
+            '/api/users/authenticate',
+            '/api/users',
+            '/api/users/register'
             
         ]
     });
