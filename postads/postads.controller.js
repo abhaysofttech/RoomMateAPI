@@ -7,6 +7,7 @@ const postadsService = require('./postads.service');
 //Routes
 router.post('/newads', newAds); //own type /newads
 router.get('/', getAds);
+router.post('/', searchAds);
 router.get('/:id', getAdsDetails);
 router.get('/myads/:id', getMyAds);
 router.get('/reqGender/:id', getAdsGender);
@@ -22,6 +23,11 @@ function newAds(req,res,next){
 }
 function getAds(req,res,next){
     postadsService.getAds()
+    .then(ads => res.json(ads))
+    .catch(err => console.log(err));
+}
+function searchAds(req,res,next){
+    postadsService.searchAds(req)
     .then(ads => res.json(ads))
     .catch(err => console.log(err));
 }
