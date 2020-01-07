@@ -22,9 +22,9 @@ async function getAds() {
 }
 async function searchAds(req){
     return await PostAds.find({
-        gender: req.body.gender,
-        roomType: req.body.roomType,
-        apparttype:req.body.apparttype,
+        gender: {$in:req.body.gender},
+        roomType: {$in:req.body.roomType},
+        apparttype:{$in:req.body.apparttype},
         rentAmount: {$gte: req.body.rentAmount.lower, $lte: req.body.rentAmount.upper}
     }).select('-hash');
 }

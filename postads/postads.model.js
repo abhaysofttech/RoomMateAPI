@@ -19,6 +19,15 @@ const PostAdsSchema = new mongoose.Schema({
     balcony: {type:String, required: true},
     cupboard: {type:String, required: true},
 
+    address: {type:String,  default: ''},
+    state: {type:String,  default: ''},
+    city: {type:String,  default: ''},
+    pincode: {type:Number,  default: ''},
+    landmark: {type:String,  default: ''},
+    latitude: {type:Number,  default: ''},
+    longitude: {type:Number,  default: ''},
+
+
     rentAmount: {type:Number, default: ''},
     depositAmount: {type:Number, default: ''},
     rentNegotiable: {type:Boolean, default:false},
