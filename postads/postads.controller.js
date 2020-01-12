@@ -7,6 +7,8 @@ const postadsService = require('./postads.service');
 //Routes
 router.post('/newads', newAds); //own type /newads
 router.get('/', getAds);
+router.get('/cities', getCities);
+router.get('/areas', getAreas);
 router.post('/', searchAds);
 router.get('/:id', getAdsDetails);
 router.get('/myads/:id', getMyAds);
@@ -14,6 +16,16 @@ router.get('/reqGender/:id', getAdsGender);
 router.put('/updateamenities/:id', updateAmenities);
 router.put('/updaterents/:id', updateRents);
 
+function getCities(req,res,next){
+    postadsService.getCities()
+    .then(cities => res.json(cities))
+    .catch(err => console.log(err));
+}
+function getAreas(req,res,next){
+    postadsService.getAreas()
+    .then(areas => res.json(areas))
+    .catch(err => console.log(err));
+}
 function newAds(req,res,next){
     postadsService.newAds(req.body) //newAds - this name is service function from postads.service.js file
     .then(data => {

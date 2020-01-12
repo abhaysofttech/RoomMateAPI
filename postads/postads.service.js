@@ -11,7 +11,8 @@ module.exports = {
     getMyAds,
     getAdsDetails,
     updateAmenities,
-    updateRent
+    updateRent,
+    getCities
 };
 
 async function getAds() {
@@ -30,6 +31,16 @@ async function searchAds(req){
 }
 async function getAdsGender(id) {
     return await PostAds.find({gender:{$eq : id}});
+}
+
+async function getCities() {
+    return await PostAds.distinct("city", { "city" : { $nin : ["", null] }}).sort();
+}
+async function getAreas() {
+    return await PostAds.find({$and: [
+        { $and: [{"city": 'Baramati'}] },
+      //  { "zip" : zip }
+    ]})
 }
 
 async function getAdsDetails(id) {
