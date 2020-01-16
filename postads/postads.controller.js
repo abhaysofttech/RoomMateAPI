@@ -8,21 +8,22 @@ const postadsService = require('./postads.service');
 router.post('/newads', newAds); //own type /newads
 router.get('/', getAds);
 router.get('/cities', getCities);
-router.get('/areas', getAreas);
+router.get('/areas/:id', getAreas);
 router.post('/', searchAds);
 router.get('/:id', getAdsDetails);
+// router.get('/:id/:param', getAdsDetailsVerify);
 router.get('/myads/:id', getMyAds);
 router.get('/reqGender/:id', getAdsGender);
 router.put('/updateamenities/:id', updateAmenities);
 router.put('/updaterents/:id', updateRents);
 
 function getCities(req,res,next){
-    postadsService.getCities()
+    postadsService.getCities()  
     .then(cities => res.json(cities))
     .catch(err => console.log(err));
 }
 function getAreas(req,res,next){
-    postadsService.getAreas()
+    postadsService.getAreas(req.params.id)
     .then(areas => res.json(areas))
     .catch(err => console.log(err));
 }
@@ -59,6 +60,11 @@ function getAdsDetails(req,res,next){
     .then(ads => res.json(ads))
     .catch(err => console.log(err));
 }
+// function getAdsDetailsVerify(req,res,next){
+//     console.log(req);
+//     postadsService.getAdsDetailsVerify(req.params.id,req.params.param)
+//     .catch(err => console.log(err));
+// }
 function updateAmenities(req, res, next) {
 
     postadsService.updateAmenities(req.params.id, req.body)

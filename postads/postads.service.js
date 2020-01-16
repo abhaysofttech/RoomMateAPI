@@ -10,9 +10,11 @@ module.exports = {
     getAdsGender,
     getMyAds,
     getAdsDetails,
+    // getAdsDetailsVerify,
     updateAmenities,
     updateRent,
-    getCities
+    getCities,
+    getAreas
 };
 
 async function getAds() {
@@ -23,6 +25,7 @@ async function getAds() {
 }
 async function searchAds(req){
     return await PostAds.find({
+        area: {$eq:req.body.area},
         gender: {$in:req.body.gender},
         roomType: {$in:req.body.roomType},
         apparttype:{$in:req.body.apparttype},
@@ -36,20 +39,25 @@ async function getAdsGender(id) {
 async function getCities() {
     return await PostAds.distinct("city", { "city" : { $nin : ["", null] }}).sort();
 }
-async function getAreas() {
+async function getAreas(id) {
     return await PostAds.find({$and: [
-        { $and: [{"city": 'Baramati'}] },
+        { $and: [{"city": id}] },
       //  { "zip" : zip }
-    ]})
+    ]},{"area":1})
 }
 
 async function getAdsDetails(id) {
     return await PostAds.findById(id).select('-hash');
 }
 
+// async function getAdsCiVerify(id,param) {
+//     return await PostAds.find(id,{${param}:1});
+// }
+
 async function getMyAds(id) {
     return await PostAds.find({phonenumber:{$eq : id}});
 }
+
 
 function newAds(adsDetail) {
     const newads = new PostAds(adsDetail);
