@@ -10,8 +10,8 @@ function jwt() {
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes that don't require authentication
-            // '/users',
-            // '/users/authenticate',
+            '/users',
+            '/users/authenticate',
             // '/postads/newads',
            '/api/users',
             '/api/users/authenticate',

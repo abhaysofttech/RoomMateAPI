@@ -2,6 +2,7 @@ const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const db = require('../_helpers/db');
 const PostAds = db.PostAds; // PostAds is a schema name in _helpers/db file
+const Images = db.Images; // Image is a schema name in _helpers/db file
 
 module.exports = {
     newAds,
@@ -14,7 +15,9 @@ module.exports = {
     updateAmenities,
     updateRent,
     getCities,
-    getAreas
+    getAreas,
+    getAllImages,
+    index
 };
 
 async function getAds() {
@@ -111,4 +114,19 @@ async function updateAmenities(id, amenitiesParam) {
     Object.assign(ads, ads);
 
     await ads.save();
+}
+
+async function getAllImages() {
+    console.log("Check All image ***************")
+    return await Images.find().select('-hash');
+}
+
+async function index(req) {
+    console.log("Check All image ***************")
+     return await PostAds.findById(req.params.id)
+    .populate('images')
+    .exec(function(err, PostAds){
+       
+    })
+   
 }

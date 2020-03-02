@@ -51,7 +51,25 @@ const PostAdsSchema = new mongoose.Schema({
     internetConnectivity: {type:Boolean, default:false},
     postdate: {type:Date, default: Date.now}
    
-});
+},{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+})
+PostAdsSchema.virtual('images', {
+    ref: 'Images',
+    localField: '_id',
+    foreignField: 'adsId'
+})
 
-PostAdsSchema.set('toJSON',{virtuals:true});
+
+// PostAdsSchema.virtual('images')
+//   .set(function() {
+//       this.set({
+//         ref:'Images',
+//         localField:'adsId',
+//         foreignField:'_id'
+//       })
+    
+//   })
+// PostAdsSchema.set('toJSON',{virtuals:true});
 module.exports = mongoose.model('PostAds', PostAdsSchema);  // postads.service from this file PostAds name is taken(db.PostAds)

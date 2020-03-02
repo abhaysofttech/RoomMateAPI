@@ -15,13 +15,6 @@ const allowedOrigins = [
   'http://localhost:8100'
 ];
 const options = {
-  // origin: (origin, callback) => {
-  //   if (allowedOrigins.includes(origin) || !origin) {
-  //     callback(null, true);
-  //   } else {
-  //     callback(new Error('Origin not allowed by CORS'));
-  //   }
-  // },
   "Access-Control-Allow-Credentials": true,
 
   "Access-Control-Allow-Origin": '*',
@@ -35,8 +28,8 @@ app.use(bodyParser.json());
 
 
 // use JWT auth to secure the api
-// app.use(jwt());
-// app.use(passport.initialize());
+//  app.use(jwt());
+ app.use(passport.initialize());
 
 // api routes
 app.use('/users', require('./users/users.controller'));
