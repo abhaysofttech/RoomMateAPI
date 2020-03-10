@@ -22,7 +22,11 @@ module.exports = {
 
 async function getAds() {
     console.log("Check ***************")
-    return await PostAds.find().select('-hash');
+    //return await PostAds.find().select('-hash');
+    return await PostAds.find().select('-hash')
+    .populate('images')
+    .populate('adsvisits')
+      
     //db.getCollection('postads').find({phonenumber:{$eq : 9960732614},gender:{$eq : 'Female'}})
     //db.getCollection('postads').find({rentAmount:{$gte : '2000',$lte:'4000'}})
 }
@@ -33,7 +37,9 @@ async function searchAds(req){
         roomType: {$in:req.body.roomType},
         apparttype:{$in:req.body.apparttype},
         rentAmount: {$gte: req.body.rentAmount.lower, $lte: req.body.rentAmount.upper}
-    }).select('-hash');
+    }).select('-hash')
+    .populate('images')
+    .populate('adsvisits');
 }
 async function getAdsGender(id) {
     return await PostAds.find({gender:{$eq : id}});

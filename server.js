@@ -1,5 +1,6 @@
 require('rootpath')();
 const express = require('express');
+const path = require('path')
 const app = express();
 const cors = require('cors');
 const bodyParser= require('body-parser');
@@ -26,14 +27,16 @@ app.use(cors(options));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, 'public')))
 
 // use JWT auth to secure the api
 //  app.use(jwt());
- app.use(passport.initialize());
+//  app.use(passport.initialize());
 
 // api routes
 app.use('/users', require('./users/users.controller'));
 app.use('/postads', require('./postads/postads.controller'));
+app.use('/adsvisits', require('./adsvisits/adsvisits.controller'));
 // global error handler
 app.use(errorHandler);
 

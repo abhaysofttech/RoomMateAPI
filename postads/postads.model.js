@@ -60,6 +60,11 @@ PostAdsSchema.virtual('images', {
     localField: '_id',
     foreignField: 'adsId'
 })
+PostAdsSchema.virtual('adsvisits', {
+    ref: 'AdsVisits',
+    localField: '_id',
+    foreignField: 'adsId'
+})
 
 
 // PostAdsSchema.virtual('images')

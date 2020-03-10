@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../_helpers/db');
 const PostAds = db.PostAds; // PostAds is a schema name in _helpers/db file
 const Image = db.Images;
+const AdsVisits = db.AdsVisits;
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
@@ -33,7 +34,7 @@ const storage = multer.diskStorage({
         const uploadDir = path.join(__dirname, '..', 'public', 'uploads', `${adsId}`)
         // fs.mkdirSync(uploadDir)
         if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(dir);
+            fs.mkdirSync(uploadDir);
         }
         cb(null, uploadDir)
     },
@@ -71,7 +72,8 @@ function checkFileType(file, cb) {
 //******** Code for the store Image End */
 router.get('/:id', (req, res) => {
     PostAds.findById(req.params.id)
-        .populate('images')
+    .populate('images')
+    .populate('adsvisits')
         .exec(function (err, PostAds) {
             if (err) res.send(err)
             res.json(PostAds)
@@ -100,6 +102,16 @@ async function index(req) {
         })
 
 }
+
+router.post('/:phonenumber/adsvisits', (req, res, next) => {
+    const newadsvisits = new AdsVisits(req.body)
+    newadsvisits.phonenumber = req.params.phonenumber;
+    newadsvisits.adsId = req.body.adsID;
+   newadsvisits.save(function (err, image) {
+        if (err) res.send(err)
+        res.json(image)
+    })
+});
 function index(req, res) {
     postadsService.index(req)
         .then(Images => res.json(Images))
