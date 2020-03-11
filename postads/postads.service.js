@@ -2,6 +2,7 @@ const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const db = require('../_helpers/db');
 const PostAds = db.PostAds; // PostAds is a schema name in _helpers/db file
+const AdsVisits = db.AdsVisits; // PostAds is a schema name in _helpers/db file
 const Images = db.Images; // Image is a schema name in _helpers/db file
 
 module.exports = {
@@ -10,6 +11,7 @@ module.exports = {
     searchAds,
     getAdsGender,
     getMyAds,
+    getRecentAdsVisit,
     getAdsDetails,
     // getAdsDetailsVerify,
     updateAmenities,
@@ -64,9 +66,15 @@ async function getAdsDetails(id) {
 // }
 
 async function getMyAds(id) {
-    return await PostAds.find({phonenumber:{$eq : id}});
+    return await PostAds.find({phonenumber:{$eq : id}})
+    .populate('images')
+    .populate('adsvisits');
 }
 
+async function getRecentAdsVisit(id) {
+    return await AdsVisits.find({phonenumber:{$eq : id}})
+    
+}
 
 function newAds(adsDetail) {
     const newads = new PostAds(adsDetail);

@@ -20,6 +20,7 @@ router.post('/', searchAds);
 // router.get('/:id', getAdsDetails);
 
 // router.get('/:id/:param', getAdsDetailsVerify);
+router.get('/:phonenumber/adsvisits', getRecentAdsVisit);
 router.get('/myads/:id', getMyAds);
 router.get('/reqGender/:id', getAdsGender);
 router.put('/updateamenities/:id', updateAmenities);
@@ -101,6 +102,13 @@ async function index(req) {
 
         })
 
+}
+
+
+function getRecentAdsVisit(req, res, next) {
+    postadsService.getRecentAdsVisit(req.params.phonenumber)
+        .then(ads => res.json(ads))
+        .catch(err => console.log(err));
 }
 
 router.post('/:phonenumber/adsvisits', (req, res, next) => {
