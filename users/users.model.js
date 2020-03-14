@@ -15,9 +15,18 @@ const UserSchema = new mongoose.Schema({
     userGender:{type:String, required: true}
 
     
+},{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+})
+UserSchema.virtual('profileimages', {
+    ref: 'ProfileImages',
+    localField: '_id',
+    foreignField: 'profileId'
 });
 //If you want the virtual field to be displayed on client side, 
 //then set {virtuals: true} for toObject and toJSON in schema options as below:
-UserSchema.set('toJSON', { virtuals: true }); 
+// UserSchema.set('toJSON', { virtuals: true }); 
+
 
 module.exports = mongoose.model('User', UserSchema);

@@ -26,6 +26,7 @@ async function getAds() {
     console.log("Check ***************")
     //return await PostAds.find().select('-hash');
     return await PostAds.find().select('-hash')
+    .populate('profileimages')
     .populate('images')
     .populate('adsvisits')
       
@@ -41,6 +42,7 @@ async function searchAds(req){
         rentAmount: {$gte: req.body.rentAmount.lower, $lte: req.body.rentAmount.upper}
     }).select('-hash')
     .populate('images')
+    .populate('profileimages')
     .populate('adsvisits');
 }
 async function getAdsGender(id) {

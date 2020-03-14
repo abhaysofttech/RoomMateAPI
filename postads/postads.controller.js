@@ -47,7 +47,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 },
+    // limits: { fileSize: 1000000 },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
     }
@@ -74,6 +74,7 @@ function checkFileType(file, cb) {
 router.get('/:id', (req, res) => {
     PostAds.findById(req.params.id)
     .populate('images')
+    .populate('profileimages')
     .populate('adsvisits')
         .exec(function (err, PostAds) {
             if (err) res.send(err)

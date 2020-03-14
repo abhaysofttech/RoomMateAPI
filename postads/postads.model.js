@@ -65,6 +65,11 @@ PostAdsSchema.virtual('adsvisits', {
     localField: '_id',
     foreignField: 'adsId'
 })
+PostAdsSchema.virtual('profileimages', {
+    ref: 'ProfileImages',
+    localField: 'username',
+    foreignField: 'userName'
+});
 
 
 // PostAdsSchema.virtual('images')

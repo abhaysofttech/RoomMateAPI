@@ -3,8 +3,12 @@ const router = express.Router();
 
 const userService = require('./users.service');
 // call user modal
+const db = require('../_helpers/db');
 const User = require('./users.model');
-
+const ProfileImages = db.ProfileImages;
+const fs = require('fs')
+const path = require('path')
+const multer = require('multer')
 //routes
 router.get('/', getAll);
 router.post('/authenticate', authenticate);
@@ -14,6 +18,63 @@ router.get('/current', getCurrent);
 router.get('/:username', getByUsername);
 router.delete('/:id', _delete);
 router.put('/update/:id', update);
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const { adsId } = req.body
+        const uploadDir = path.join(__dirname, '..', 'public', 'profileImage')
+        // fs.mkdirSync(uploadDir)
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
+        cb(null, uploadDir)
+    },
+    filename: function (req, file, cb) {
+        var ext = path.extname(file.originalname);
+       // cb(null, file.originalname);
+        cb(null, req.params.id+ext);
+
+    }
+})
+const upload = multer({
+    storage: storage,
+    // limits: { fileSize: 1000000 },
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb);
+    }
+})
+
+function checkFileType(file, cb) {
+    // Allow ext
+    const filetypes = /jpeg|jpg|png|gif/;
+    // check ext
+    const extname = filetypes.test(path.extname
+        (file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    
+    if(mimetype && extname){
+        return cb(null,true);
+    }
+    else {
+        cb('Error: Images Only!')
+    }
+}
+
+// router.post('/:id/images', upload.single('data'), (req, res, next) => {
+    router.post('/:id/profileimages', upload.single('data'), (req, res, next) => {
+        const path = require('path')
+        const remove = path.join(__dirname, '..', 'public')
+        const relPath = req.file.path.replace(remove, '')
+        const newProfileImage = new ProfileImages(req.body)
+        newProfileImage.path = relPath
+        var ext = path.extname(req.file.originalname);
+        newProfileImage.mimeType = ext
+
+        newProfileImage.save(function (err, image) {
+            if (err) res.send(err)
+            res.json(image)
+        })
+    });
 
 function getAll(req, res, next) {
     userService.getAll()
