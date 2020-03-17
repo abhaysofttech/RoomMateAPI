@@ -18,6 +18,14 @@ const AdsVisitsSchema = new Schema({
         default:Date.now
     }
 
+},{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+})
+AdsVisitsSchema.virtual('images', {
+    ref: 'Images',
+    localField: '_id',
+    foreignField: 'adsId'
 })
 
 

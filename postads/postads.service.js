@@ -14,6 +14,7 @@ module.exports = {
     getRecentAdsVisit,
     getAdsDetails,
     // getAdsDetailsVerify,
+    updateAds,
     updateAmenities,
     updateRent,
     getCities,
@@ -26,37 +27,39 @@ async function getAds() {
     console.log("Check ***************")
     //return await PostAds.find().select('-hash');
     return await PostAds.find().select('-hash')
-    .populate('profileimages')
-    .populate('images')
-    .populate('adsvisits')
-      
+        .populate('profileimages')
+        .populate('images')
+        .populate('adsvisits')
+
     //db.getCollection('postads').find({phonenumber:{$eq : 9960732614},gender:{$eq : 'Female'}})
     //db.getCollection('postads').find({rentAmount:{$gte : '2000',$lte:'4000'}})
 }
-async function searchAds(req){
+async function searchAds(req) {
     return await PostAds.find({
-        area: {$eq:req.body.area},
-        gender: {$in:req.body.gender},
-        roomType: {$in:req.body.roomType},
-        apparttype:{$in:req.body.apparttype},
-        rentAmount: {$gte: req.body.rentAmount.lower, $lte: req.body.rentAmount.upper}
+        area: { $eq: req.body.area },
+        gender: { $in: req.body.gender },
+        roomType: { $in: req.body.roomType },
+        apparttype: { $in: req.body.apparttype },
+        rentAmount: { $gte: req.body.rentAmount.lower, $lte: req.body.rentAmount.upper }
     }).select('-hash')
-    .populate('images')
-    .populate('profileimages')
-    .populate('adsvisits');
+        .populate('images')
+        .populate('profileimages')
+        .populate('adsvisits');
 }
 async function getAdsGender(id) {
-    return await PostAds.find({gender:{$eq : id}});
+    return await PostAds.find({ gender: { $eq: id } });
 }
 
 async function getCities() {
-    return await PostAds.distinct("city", { "city" : { $nin : ["", null] }}).sort();
+    return await PostAds.distinct("city", { "city": { $nin: ["", null] } }).sort();
 }
 async function getAreas(id) {
-    return await PostAds.find({$and: [
-        { $and: [{"city": id}] },
-      //  { "zip" : zip }
-    ]},{"area":1})
+    return await PostAds.find({
+        $and: [
+            { $and: [{ "city": id }] },
+            //  { "zip" : zip }
+        ]
+    }, { "area": 1 })
 }
 
 async function getAdsDetails(id) {
@@ -68,14 +71,19 @@ async function getAdsDetails(id) {
 // }
 
 async function getMyAds(id) {
-    return await PostAds.find({phonenumber:{$eq : id}})
-    .populate('images')
-    .populate('adsvisits');
+    return await PostAds.find({ phonenumber: { $eq: id } })
+        .populate('images')
+        .populate('adsvisits');
 }
 
 async function getRecentAdsVisit(id) {
-    return await AdsVisits.find({phonenumber:{$eq : id}})
-    
+    return await AdsVisits.find({ phonenumber: { $eq: id } })
+    // .populate('images')
+    // return await AdsVisits.aggregate([
+    //     {$group:{_id:"$adsId",allValues : {"$push" : "$$ROOT"}}}
+    //     ])
+    // .populate('images')
+
 }
 
 function newAds(adsDetail) {
@@ -131,6 +139,17 @@ async function updateAmenities(id, amenitiesParam) {
 
     await ads.save();
 }
+async function updateAds(id, adsStatusParam) {
+    // const newads = new PostAds(adsDetail);
+    const ads = await PostAds.findById(id);
+    ads.adsStatus = adsStatusParam.adsStatus
+     
+
+    // validate
+    if (!ads) throw 'Advertise not found';
+    Object.assign(ads, ads);
+    await ads.save();
+}
 
 async function getAllImages() {
     console.log("Check All image ***************")
@@ -139,10 +158,10 @@ async function getAllImages() {
 
 async function index(req) {
     console.log("Check All image ***************")
-     return await PostAds.findById(req.params.id)
-    .populate('images')
-    .exec(function(err, PostAds){
-       
-    })
-   
+    return await PostAds.findById(req.params.id)
+        .populate('images')
+        .exec(function (err, PostAds) {
+
+        })
+
 }

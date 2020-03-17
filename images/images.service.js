@@ -30,7 +30,6 @@ async function getAllImages() {
 
 
 async function create(userParam) {
-    debugger
     const path = require('path')
     const remove = path.join(__dirname, '..','..','public')
     const relPath = req.file.path.replace(remove, '')

@@ -23,6 +23,7 @@ router.post('/', searchAds);
 router.get('/:phonenumber/adsvisits', getRecentAdsVisit);
 router.get('/myads/:id', getMyAds);
 router.get('/reqGender/:id', getAdsGender);
+router.put('/updateads/:id', updateAds);
 router.put('/updateamenities/:id', updateAmenities);
 router.put('/updaterents/:id', updateRents);
 router.get('/images', getAllImages);
@@ -183,6 +184,12 @@ function getAdsDetails(req, res, next) {
 //     postadsService.getAdsDetailsVerify(req.params.id,req.params.param)
 //     .catch(err => console.log(err));
 // }
+function updateAds(req, res, next) {
+
+    postadsService.updateAds(req.params.id, req.body)
+        .then(() => res.json(`${req.params.id} Ads status ${req.body.adsStatus?'Active':'Inactive'} update successful `))
+        .catch(err => next(err));
+}
 function updateAmenities(req, res, next) {
 
     postadsService.updateAmenities(req.params.id, req.body)
