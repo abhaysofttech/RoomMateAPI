@@ -8,6 +8,7 @@ module.exports = {
     authenticate,
     getAll,
     getById,
+    getRequest,
     getByUsername,
     create,
     update,
@@ -34,8 +35,33 @@ async function getAll() {
 }
 
 async function getById(id) {
-    return await User.findById(id).select('-hash');
+    return await User.findById(id).select('')
+    // .populate('profileimages')
+    // .populate('request')
+  
+    .exec(
+        function(err, user) {
+          if (user) {
+            response = {
+                user: {
+                  username: user.firstname + user.lastname,
+                  userid: user.id
+                }
+              };
+            //  return(response);
+          }
+        }
+    )
+  
+    ;
 }
+async function getRequest(id) {
+    return await User.findById(id).select('-hash')
+    .populate('profileimages')
+    .populate('request')
+    ;
+}
+
 
 async function getByUsername(username) {
   //  return await User.findById(username).select('-hash');

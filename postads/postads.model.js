@@ -70,7 +70,11 @@ PostAdsSchema.virtual('profileimages', {
     localField: 'username',
     foreignField: 'userName'
 });
-
+PostAdsSchema.virtual('request', {
+    ref: 'Request',
+    localField: '_id',
+    foreignField: 'adsId'
+});
 
 // PostAdsSchema.virtual('images')
 //   .set(function() {

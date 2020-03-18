@@ -4,6 +4,7 @@ const db = require('../_helpers/db');
 const PostAds = db.PostAds; // PostAds is a schema name in _helpers/db file
 const AdsVisits = db.AdsVisits; // PostAds is a schema name in _helpers/db file
 const Images = db.Images; // Image is a schema name in _helpers/db file
+const Request = db.Request; // Image is a schema name in _helpers/db file
 
 module.exports = {
     newAds,
@@ -20,7 +21,8 @@ module.exports = {
     getCities,
     getAreas,
     getAllImages,
-    index
+    index,
+    requested
 };
 
 async function getAds() {
@@ -143,7 +145,7 @@ async function updateAds(id, adsStatusParam) {
     // const newads = new PostAds(adsDetail);
     const ads = await PostAds.findById(id);
     ads.adsStatus = adsStatusParam.adsStatus
-     
+
 
     // validate
     if (!ads) throw 'Advertise not found';
@@ -164,4 +166,15 @@ async function index(req) {
 
         })
 
+}
+
+function requested(requestId,requestDetail) {
+    const newRequest = new Request(requestDetail);
+    newRequest.adsId = requestId;
+    return newRequest.save().then(function (request) {
+        const { _id } = request;
+        return _id;
+    }).catch(function (err) {
+        return false;
+    });
 }

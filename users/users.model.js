@@ -24,6 +24,11 @@ UserSchema.virtual('profileimages', {
     localField: '_id',
     foreignField: 'profileId'
 });
+UserSchema.virtual('request', {
+    ref: 'Request',
+    localField: '_id',
+    foreignField: 'adsOwnerId'
+});
 //If you want the virtual field to be displayed on client side, 
 //then set {virtuals: true} for toObject and toJSON in schema options as below:
 // UserSchema.set('toJSON', { virtuals: true }); 

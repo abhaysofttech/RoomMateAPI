@@ -4,7 +4,7 @@ const router = express.Router();
 const userService = require('./users.service');
 // call user modal
 const db = require('../_helpers/db');
-const User = require('./users.model');
+const User = db.User;
 const ProfileImages = db.ProfileImages;
 const fs = require('fs')
 const path = require('path')
@@ -14,7 +14,7 @@ router.get('/', getAll);
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/current', getCurrent);
-//router.get('/:id', getById);
+// router.get('/userid/:id', getById);
 router.get('/:username', getByUsername);
 router.delete('/:id', _delete);
 router.put('/update/:id', update);
@@ -31,8 +31,8 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         var ext = path.extname(file.originalname);
-       // cb(null, file.originalname);
-        cb(null, req.params.id+ext);
+        // cb(null, file.originalname);
+        cb(null, req.params.id + ext);
 
     }
 })
@@ -51,9 +51,9 @@ function checkFileType(file, cb) {
     const extname = filetypes.test(path.extname
         (file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
-    
-    if(mimetype && extname){
-        return cb(null,true);
+
+    if (mimetype && extname) {
+        return cb(null, true);
     }
     else {
         cb('Error: Images Only!')
@@ -61,20 +61,20 @@ function checkFileType(file, cb) {
 }
 
 // router.post('/:id/images', upload.single('data'), (req, res, next) => {
-    router.post('/:id/profileimages', upload.single('data'), (req, res, next) => {
-        const path = require('path')
-        const remove = path.join(__dirname, '..', 'public')
-        const relPath = req.file.path.replace(remove, '')
-        const newProfileImage = new ProfileImages(req.body)
-        newProfileImage.path = relPath
-        var ext = path.extname(req.file.originalname);
-        newProfileImage.mimeType = ext
+router.post('/:id/profileimages', upload.single('data'), (req, res, next) => {
+    const path = require('path')
+    const remove = path.join(__dirname, '..', 'public')
+    const relPath = req.file.path.replace(remove, '')
+    const newProfileImage = new ProfileImages(req.body)
+    newProfileImage.path = relPath
+    var ext = path.extname(req.file.originalname);
+    newProfileImage.mimeType = ext
 
-        newProfileImage.save(function (err, image) {
-            if (err) res.send(err)
-            res.json(image)
-        })
-    });
+    newProfileImage.save(function (err, image) {
+        if (err) res.send(err)
+        res.json(image)
+    })
+});
 
 function getAll(req, res, next) {
     userService.getAll()
@@ -92,8 +92,8 @@ function register(req, res, next) {
     const useridstring = (req.body.firstname.slice(0, 3) + req.body.lastname.slice(0, 3)).toLowerCase();
     req.body.userid = useridstring;
     userService.create(req.body)
-    .then(() => res.json({}))
-    .catch(err => next(err));
+        .then(() => res.json({}))
+        .catch(err => next(err));
 
     // let errors = [];
     // //check required field
@@ -114,7 +114,7 @@ function register(req, res, next) {
     //     .then(() => res.json({}))
     //     .catch(err => next(err));
     // }
-  
+
 }
 
 
@@ -125,11 +125,54 @@ function getCurrent(req, res, next) {
 }
 
 function getById(req, res, next) {
-    userService.getById(req.params.id)
-        .then(user => user ? res.json(user) : res.sendStatus(404))
-        .catch(err => next(err));
-}
+    // userService.getById(req.params.id)
+    //     .then(user => {console.log(user),user ? res.json(user) : res.sendStatus(404)})
+    //     .catch(err => next(err));
 
+}
+router.get('/userid/:id', (req, res) => {
+    User.findById(req.params.id)
+        .populate('request')
+        // .populate('images')
+        .populate('profileimages')
+        // .populate('adsvisits')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        username: user.firstname + user.lastname,
+                        userid: user.id,
+                        phonenumber: user.phonenumber,
+                        profileimages: user.profileimages,
+                        request: user.request
+                    };
+                    res.json(response)
+                }
+            }
+        )
+});
+router.get('/request/:id/:type?', (req, res) => {
+    User.findById(req.params.id)
+        .populate('request')
+        .populate('profileimages')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    let requestData;
+                    if (req.params.type != undefined) {
+                        requestData = user.request.filter(function (data) { if (data.status == req.params.type) return data })
+                    }
+                    else {
+                        requestData = user.request
+                    }
+                    response = {
+                         requestData: requestData
+                    };
+                    res.json(response)
+                }
+            }
+        )
+});
 function getByUsername(req, res, next) {
     userService.getByUsername(req.params.username)
         .then(user => user ? res.json(user) : res.sendStatus(404))

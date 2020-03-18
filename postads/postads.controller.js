@@ -27,6 +27,8 @@ router.put('/updateads/:id', updateAds);
 router.put('/updateamenities/:id', updateAmenities);
 router.put('/updaterents/:id', updateRents);
 router.get('/images', getAllImages);
+router.get('/request/:id', getRequest);
+router.post('/request/:id', request);
 // ****** Code for the Store Image **************
 
 
@@ -74,6 +76,7 @@ function checkFileType(file, cb) {
 //******** Code for the store Image End */
 router.get('/:id', (req, res) => {
     PostAds.findById(req.params.id)
+    .populate('request')
     .populate('images')
     .populate('profileimages')
     .populate('adsvisits')
@@ -202,5 +205,18 @@ function updateRents(req, res, next) {
         .then(() => res.json({}))
         .catch(err => next(err));
 }
-
+function request(req, res, next) {
+    postadsService.requested(req.params.id, req.body)
+        .then(request => res.json(request))
+        .catch(err => console.log(err));
+}
+function getRequest(req, res, next) {
+    console.log("***** Get Images")
+    postadsService.getRequest()
+        .then(request => 
+            {
+                res.json(Images)
+            })
+        .catch(err => console.log(err));
+}
 module.exports = router;
