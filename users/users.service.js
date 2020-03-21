@@ -6,6 +6,7 @@ const User = db.User;
 
 module.exports = {
     authenticate,
+    authenticatebyemail,
     getAll,
     phonenumber,
     getById,
@@ -29,6 +30,18 @@ async function authenticate({ phonenumber, password }) {
     }
 }
 
+async function authenticatebyemail({ email, password }) {
+    const user = await User.findOne({ email }).populate('profileimages');
+    if (user && bcrypt.compareSync(password, user.password)) {
+        const { password, ...userWithoutHash } = user.toObject();
+        const token = jwt.sign({ sub: user.id }, config.secret);
+        return {
+            ...userWithoutHash,
+            token
+        };
+    }
+}
+
 async function getAll() {
     console.log("Check ***************")
     return await User.find().select('-hash')
@@ -36,7 +49,6 @@ async function getAll() {
 }
 
 async function phonenumber(contact) {
-    console.log("Check ***************")
     return await User.findOne({ phonenumber: contact })
         .populate('profileimages')
         .exec(
@@ -44,7 +56,7 @@ async function phonenumber(contact) {
                 if (user) {
                     response = {
                         user: {
-                            username: user.firstname + user.lastname,
+                            username: user.firstname + " " + user.lastname,
                             userid: user.id
                         }
                     };

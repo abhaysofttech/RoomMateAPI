@@ -12,6 +12,7 @@ const multer = require('multer')
 //routes
 router.get('/', getAll);
 router.post('/authenticate', authenticate);
+router.post('/authenticatebyemail', authenticatebyemail);
 router.post('/register', register);
 router.get('/current', getCurrent);
 router.get('/userid/:id', getById);
@@ -99,7 +100,7 @@ router.get('/phonenumber/:phonenumber', (req, res) => {
                 if (user) {
                     response = {
                         user: {
-                            username: user.firstname + user.lastname,
+                            username: user.firstname + " " + user.lastname,
                             userid: user.id
                         }
                     };
@@ -120,7 +121,7 @@ router.get('/emailcheck/:email', (req, res) => {
                 if (user) {
                     response = {
                         user: {
-                            username: user.firstname + user.lastname,
+                            username: user.firstname + " " + user.lastname,
                             userid: user.id
                         }
                     };
@@ -136,9 +137,15 @@ router.get('/emailcheck/:email', (req, res) => {
 
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
-        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or Password is incorrect' }))
+        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Phonenumber or Password is incorrect' }))
         .catch(err => next(err));
 }
+function authenticatebyemail(req, res, next) {
+    userService.authenticatebyemail(req.body)
+        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Email or Password is incorrect' }))
+        .catch(err => next(err));
+}
+
 
 function register(req, res, next) {
     const useridstring = (req.body.firstname.slice(0, 3) + req.body.lastname.slice(0, 3)).toLowerCase();
