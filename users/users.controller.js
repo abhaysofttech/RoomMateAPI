@@ -14,11 +14,11 @@ router.get('/', getAll);
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/current', getCurrent);
-// router.get('/userid/:id', getById);
+router.get('/userid/:id', getById);
 router.get('/:username', getByUsername);
 router.delete('/:id', _delete);
 router.put('/update/:id', update);
-
+// router.get('/phonenumber/:phonenumber', phonenumber);
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const { adsId } = req.body
@@ -82,6 +82,58 @@ function getAll(req, res, next) {
         .catch(err => console.log(err));
 }
 
+function phonenumber(req, res, next) {
+    userService.phonenumber(req.params.phonenumber)
+        .then(phonenumber => res.json(phonenumber))
+        .catch(err => console.log(err));
+        // .then(user => {
+        //     user ? res.json(user) : res.sendStatus(404)
+        // })
+        // .catch(err => next(err));
+}
+router.get('/phonenumber/:phonenumber', (req, res) => {
+    User.findOne({ phonenumber: req.params.phonenumber })
+        .populate('profileimages')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        user: {
+                            username: user.firstname + user.lastname,
+                            userid: user.id
+                        }
+                    };
+                    res.json(response)
+                }
+                else{
+                    res.json("No record")
+                }
+                
+            }
+        )
+});
+router.get('/emailcheck/:email', (req, res) => {
+    User.findOne({ email: req.params.email })
+        .populate('profileimages')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        user: {
+                            username: user.firstname + user.lastname,
+                            userid: user.id
+                        }
+                    };
+                    res.json(response)
+                }
+                else{
+                    res.json("No record")
+                }
+                
+            }
+        )
+});
+
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
         .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or Password is incorrect' }))
@@ -92,8 +144,12 @@ function register(req, res, next) {
     const useridstring = (req.body.firstname.slice(0, 3) + req.body.lastname.slice(0, 3)).toLowerCase();
     req.body.userid = useridstring;
     userService.create(req.body)
-        .then(() => res.json({}))
-        .catch(err => next(err));
+    .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....'}))
+    //   .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....' }))
+        // .then((user) => {console.log(user),res.json(user)})
+        .catch(err => {
+            next(err)
+        });
 
     // let errors = [];
     // //check required field
@@ -125,9 +181,9 @@ function getCurrent(req, res, next) {
 }
 
 function getById(req, res, next) {
-    // userService.getById(req.params.id)
-    //     .then(user => {console.log(user),user ? res.json(user) : res.sendStatus(404)})
-    //     .catch(err => next(err));
+    userService.getById(req.params.id)
+        .then(user => {console.log(user),user ? res.json(user) : res.sendStatus(404)})
+        .catch(err => next(err));
 
 }
 router.get('/userid/:id', (req, res) => {
@@ -170,6 +226,10 @@ router.get('/request/:id/:type?', (req, res) => {
                     };
                     res.json(response)
                 }
+                else{
+                    res.json("No record")
+                }
+                
             }
         )
 });

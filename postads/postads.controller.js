@@ -63,9 +63,9 @@ function checkFileType(file, cb) {
     const extname = filetypes.test(path.extname
         (file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
-    
-    if(mimetype && extname){
-        return cb(null,true);
+
+    if (mimetype && extname) {
+        return cb(null, true);
     }
     else {
         cb('Error: Images Only!')
@@ -76,10 +76,10 @@ function checkFileType(file, cb) {
 //******** Code for the store Image End */
 router.get('/:id', (req, res) => {
     PostAds.findById(req.params.id)
-    .populate('request')
-    .populate('images')
-    .populate('profileimages')
-    .populate('adsvisits')
+        .populate('request')
+        .populate('images')
+        .populate('profileimages')
+        .populate('adsvisits')
         .exec(function (err, PostAds) {
             if (err) res.send(err)
             res.json(PostAds)
@@ -120,7 +120,7 @@ router.post('/:phonenumber/adsvisits', (req, res, next) => {
     const newadsvisits = new AdsVisits(req.body)
     newadsvisits.phonenumber = req.params.phonenumber;
     newadsvisits.adsId = req.body.adsID;
-   newadsvisits.save(function (err, image) {
+    newadsvisits.save(function (err, image) {
         if (err) res.send(err)
         res.json(image)
     })
@@ -190,7 +190,7 @@ function getAdsDetails(req, res, next) {
 function updateAds(req, res, next) {
 
     postadsService.updateAds(req.params.id, req.body)
-        .then(() => res.json(`${req.params.id} Ads status ${req.body.adsStatus?'Active':'Inactive'} update successful `))
+        .then(() => res.json(`${req.params.id} Ads status ${req.body.adsStatus ? 'Active' : 'Inactive'} update successful `))
         .catch(err => next(err));
 }
 function updateAmenities(req, res, next) {
@@ -213,10 +213,9 @@ function request(req, res, next) {
 function getRequest(req, res, next) {
     console.log("***** Get Images")
     postadsService.getRequest()
-        .then(request => 
-            {
-                res.json(Images)
-            })
+        .then(request => {
+            res.json(Images)
+        })
         .catch(err => console.log(err));
 }
 module.exports = router;

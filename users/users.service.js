@@ -7,6 +7,7 @@ const User = db.User;
 module.exports = {
     authenticate,
     getAll,
+    phonenumber,
     getById,
     getRequest,
     getByUsername,
@@ -31,45 +32,65 @@ async function authenticate({ phonenumber, password }) {
 async function getAll() {
     console.log("Check ***************")
     return await User.find().select('-hash')
-    .populate('profileimages');
+        .populate('profileimages');
+}
+
+async function phonenumber(contact) {
+    console.log("Check ***************")
+    return await User.findOne({ phonenumber: contact })
+        .populate('profileimages')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        user: {
+                            username: user.firstname + user.lastname,
+                            userid: user.id
+                        }
+                    };
+                    res.json(response)
+                }
+                else{
+                    res.json("No record")
+                }
+            }
+        );
 }
 
 async function getById(id) {
     return await User.findById(id).select('')
-    // .populate('profileimages')
-    // .populate('request')
-  
-    .exec(
-        function(err, user) {
-          if (user) {
-            response = {
-                user: {
-                  username: user.firstname + user.lastname,
-                  userid: user.id
+        // .populate('profileimages')
+        // .populate('request')
+
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        user: {
+                            username: user.firstname + user.lastname,
+                            userid: user.id
+                        }
+                    };
+                    //  return(response);
                 }
-              };
-            //  return(response);
-          }
-        }
-    )
-  
-    ;
+            }
+        );
 }
 async function getRequest(id) {
     return await User.findById(id).select('-hash')
-    .populate('profileimages')
-    .populate('request')
-    ;
+        .populate('profileimages')
+        .populate('request')
+        ;
 }
 
 
 async function getByUsername(username) {
-  //  return await User.findById(username).select('-hash');
-  return await User.findOne({ username: username });
+    //  return await User.findById(username).select('-hash');
+    return await User.findOne({ username: username });
 }
 
 
-async function create(userParam) {
+async function create2(userParam) {
     // validate
     if (await User.findOne({ phonenumber: userParam.phonenumber })) {
         throw 'Phone Number "' + userParam.phonenumber + '" is already taken';
@@ -83,11 +104,36 @@ async function create(userParam) {
     }
 
     // save user
-    await user.save();
+    await user.save().then(function (user) {
+        const { _id } = user;
+        console.log(`New room id: ${_id}`);
+
+        return user;
+    }).catch(function (err) {
+        return false;
+    });
+
+}
+async function create(userParam) {
+    if (await User.findOne({ phonenumber: userParam.phonenumber })) {
+        throw 'Phone Number "' + userParam.phonenumber + '" is already register';
+    }
+    const user = new User(userParam);
+    if (userParam.password) {
+        user.password = bcrypt.hashSync(userParam.password, 10);
+    }
+    return user.save().then(function (user) {
+        const { _id } = user;
+        console.log(`New room id: ${_id}`);
+
+        return _id;
+    }).catch(function (err) {
+        return false;
+    });
 }
 
 async function update(id, userParam) {
-        const user = await User.findById(id);
+    const user = await User.findById(id);
 
     // validate
     if (!user) throw 'User not found';
