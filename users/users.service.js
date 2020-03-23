@@ -9,6 +9,7 @@ module.exports = {
     authenticatebyemail,
     getAll,
     phonenumber,
+    userById,
     getById,
     getRequest,
     getByUsername,
@@ -22,6 +23,7 @@ async function authenticate({ phonenumber, password }) {
     const user = await User.findOne({ phonenumber }).populate('profileimages');
     if (user && bcrypt.compareSync(password, user.password)) {
         const { password, ...userWithoutHash } = user.toObject();
+        console.log(userWithoutHash);
         const token = jwt.sign({ sub: user.id }, config.secret);
         return {
             ...userWithoutHash,
@@ -68,7 +70,9 @@ async function phonenumber(contact) {
             }
         );
 }
-
+async function userById(id) {
+    return await User.findById(id).select('')
+}
 async function getById(id) {
     return await User.findById(id).select('')
         // .populate('profileimages')

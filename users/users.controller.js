@@ -15,7 +15,7 @@ router.post('/authenticate', authenticate);
 router.post('/authenticatebyemail', authenticatebyemail);
 router.post('/register', register);
 router.get('/current', getCurrent);
-router.get('/userid/:id', getById);
+// router.get('/userid/:id', getById);
 router.get('/:username', getByUsername);
 router.delete('/:id', _delete);
 router.put('/update/:id', update);
@@ -87,10 +87,10 @@ function phonenumber(req, res, next) {
     userService.phonenumber(req.params.phonenumber)
         .then(phonenumber => res.json(phonenumber))
         .catch(err => console.log(err));
-        // .then(user => {
-        //     user ? res.json(user) : res.sendStatus(404)
-        // })
-        // .catch(err => next(err));
+    // .then(user => {
+    //     user ? res.json(user) : res.sendStatus(404)
+    // })
+    // .catch(err => next(err));
 }
 router.get('/phonenumber/:phonenumber', (req, res) => {
     User.findOne({ phonenumber: req.params.phonenumber })
@@ -106,10 +106,10 @@ router.get('/phonenumber/:phonenumber', (req, res) => {
                     };
                     res.json(response)
                 }
-                else{
+                else {
                     res.json("No record")
                 }
-                
+
             }
         )
 });
@@ -127,17 +127,43 @@ router.get('/emailcheck/:email', (req, res) => {
                     };
                     res.json(response)
                 }
-                else{
+                else {
                     res.json("No record")
                 }
-                
+
             }
         )
 });
 
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
-        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Phonenumber or Password is incorrect' }))
+        .then(user => {
+            console.log(user);
+            if (user) {
+                response = {
+                    id: user.id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    userid: user.userid,
+                    userGender: user.userGender,
+                    dob: user.dob,
+                    phonenumber: user.phonenumber,
+                    email: user.email,
+                    mobileverify: user.mobileverify,
+                    emailverify: user.emailverify,
+                    userType: user.userType,
+                    userCity: user.userCity,
+                    registerData: user.date,
+                    profileimages: user.profileimages,
+                    request: user.request
+                }
+                token ={
+                            token:user.token
+                        };
+                res.json([response,token]);
+            }
+            // user ? res.json(user) : res.status(400).json({ message: 'Phonenumber or Password is incorrect' })
+        })
         .catch(err => next(err));
 }
 function authenticatebyemail(req, res, next) {
@@ -151,8 +177,8 @@ function register(req, res, next) {
     const useridstring = (req.body.firstname.slice(0, 3) + req.body.lastname.slice(0, 3)).toLowerCase();
     req.body.userid = useridstring;
     userService.create(req.body)
-    .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....'}))
-    //   .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....' }))
+        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....' }))
+        //   .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username not register, Please try again.....' }))
         // .then((user) => {console.log(user),res.json(user)})
         .catch(err => {
             next(err)
@@ -189,7 +215,7 @@ function getCurrent(req, res, next) {
 
 function getById(req, res, next) {
     userService.getById(req.params.id)
-        .then(user => {console.log(user),user ? res.json(user) : res.sendStatus(404)})
+        .then(user => { console.log(user), user ? res.json(user) : res.sendStatus(404) })
         .catch(err => next(err));
 
 }
@@ -203,13 +229,57 @@ router.get('/userid/:id', (req, res) => {
             function (err, user) {
                 if (user) {
                     response = {
-                        username: user.firstname + user.lastname,
-                        userid: user.id,
+                        id: user.id,
+                        username: user.firstname + " " + user.lastname,
+                        userid: user.userid,
+                        userGender: user.userGender,
+                        dob: user.dob,
                         phonenumber: user.phonenumber,
+                        email: user.email,
+                        mobileverify: user.mobileverify,
+                        emailverify: user.emailverify,
+                        userType: user.userType,
+                        userCity: user.userCity,
+                        registerData: user.date,
                         profileimages: user.profileimages,
                         request: user.request
                     };
                     res.json(response)
+                }
+                else {
+                    res.json("No record")
+                }
+            }
+
+        )
+});
+router.get('/syncUser/:id', (req, res) => {
+    User.findById(req.params.id)
+        .populate('profileimages')
+        .exec(
+            function (err, user) {
+                if (user) {
+                    response = {
+                        id: user.id,
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        userid: user.userid,
+                        userGender: user.userGender,
+                        dob: user.dob,
+                        phonenumber: user.phonenumber,
+                        email: user.email,
+                        mobileverify: user.mobileverify,
+                        emailverify: user.emailverify,
+                        userType: user.userType,
+                        userCity: user.userCity,
+                        registerData: user.date,
+                        profileimages: user.profileimages,
+                        request: user.request
+                    };
+                    res.json(response)
+                }
+                else {
+                    res.json("No record")
                 }
             }
         )
@@ -229,14 +299,14 @@ router.get('/request/:id/:type?', (req, res) => {
                         requestData = user.request
                     }
                     response = {
-                         requestData: requestData
+                        requestData: requestData
                     };
                     res.json(response)
                 }
-                else{
+                else {
                     res.json("No record")
                 }
-                
+
             }
         )
 });

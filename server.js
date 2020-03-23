@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')))
 
 // use JWT auth to secure the api
-//  app.use(jwt());
+ app.use(jwt());
 //  app.use(passport.initialize());
 
 // api routes

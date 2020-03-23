@@ -10,19 +10,22 @@ function jwt() {
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes that don't require authentication
-            '/users',
+            // '/users',
             '/users/authenticate',
+            '/users/authenticatebyemail',
+            /^\/users\/phonenumber\/.*/,  //this is we used to pass the auth
+            /^\/users\/emailcheck\/.*/,  //this is we used to pass the auth
             // '/postads/newads',
            '/api/users',
             '/api/users/authenticate',
-           '/api/users/register'
-            
+            '/api/users/register'
+
         ]
     });
 }
 
 async function isRevoked(req, payload, done) {
-    const users = await userService.getById(payload.sub);
+    const users = await userService.userById(payload.sub);
     if (!users) {
         return done(null, true);
     }

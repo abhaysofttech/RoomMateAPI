@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
     email: {type:String, default:''},
     userType:{type:String, default:'user'}, //type must be superAdmin, grampanchayat, Admin, wardMember, employee, user
     userCity:{type:String, default:''},
-    mobileverify: {type:String,default:true},
+    mobileverify: {type:Boolean,default:false},
+    emailverify: {type:Boolean,default:false},
     date: {type:Date, default: Date.now},
     dob: {type:Date, required: true},
     userGender:{type:String, required: true}
