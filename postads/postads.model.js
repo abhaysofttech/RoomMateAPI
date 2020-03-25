@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const PostAdsSchema = new mongoose.Schema({
     // postadsid: {type:String, required: true},
-    adsStatus:{type:Boolean, default:true},
+    adsApproved:{type:String, default: 'level1'},
+    adsStatus:{type:String, default:'new'},
     phonenumber:{type:Number, required:true},
     username: {type:String, required: true},
+    userid:{type: mongoose.Schema.ObjectId},
     gender: {type:String, required: true},
     marital: {type:String, required: true},
     dob: {type:Date, required: true},

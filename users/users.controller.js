@@ -138,7 +138,6 @@ router.get('/emailcheck/:email', (req, res) => {
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
         .then(user => {
-            console.log(user);
             if (user) {
                 response = {
                     id: user.id,
@@ -162,13 +161,44 @@ function authenticate(req, res, next) {
                         };
                 res.json([response,token]);
             }
+            else{
+                res.status(400).json({ message: 'Phonenumber or Password is incorrect' })
+            }
             // user ? res.json(user) : res.status(400).json({ message: 'Phonenumber or Password is incorrect' })
         })
         .catch(err => next(err));
 }
 function authenticatebyemail(req, res, next) {
     userService.authenticatebyemail(req.body)
-        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Email or Password is incorrect' }))
+    .then(user => {
+        if (user) {
+            response = {
+                id: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                userid: user.userid,
+                userGender: user.userGender,
+                dob: user.dob,
+                phonenumber: user.phonenumber,
+                email: user.email,
+                mobileverify: user.mobileverify,
+                emailverify: user.emailverify,
+                userType: user.userType,
+                userCity: user.userCity,
+                registerData: user.date,
+                profileimages: user.profileimages,
+                request: user.request
+            }
+            token ={
+                        token:user.token
+                    };
+            res.json([response,token]);
+        }
+        else{
+            res.status(400).json({ message: 'Phonenumber or Password is incorrect' })
+        }
+        // user ? res.json(user) : res.status(400).json({ message: 'Phonenumber or Password is incorrect' })
+    })
         .catch(err => next(err));
 }
 

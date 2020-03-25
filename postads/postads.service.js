@@ -109,19 +109,20 @@ async function updateRent(id, rentParam) {
 async function updateAmenities(id, amenitiesParam) {
     // const newads = new PostAds(adsDetail);
     const ads = await PostAds.findById(id);
-    ads.airConditioner = amenitiesParam[0].isChecked,
-        ads.club = amenitiesParam[1].isChecked,
-        ads.playground = amenitiesParam[2].isChecked,
-        ads.gas = amenitiesParam[3].isChecked,
-        ads.sewage = amenitiesParam[4].isChecked,
-        ads.powerBackup = amenitiesParam[5].isChecked,
-        ads.liftService = amenitiesParam[6].isChecked,
-        ads.houseKeeper = amenitiesParam[7].isChecked,
-        ads.security = amenitiesParam[8].isChecked,
-        ads.carParking = amenitiesParam[9].isChecked,
-        ads.twoWheelerParking = amenitiesParam[10].isChecked,
-        ads.swimmingPool = amenitiesParam[11].isChecked,
-        ads.internetConnectivity = amenitiesParam[12].isChecked
+        ads.adsStatus = amenitiesParam.adsStatus,
+    ads.airConditioner = amenitiesParam.amenities[0].isChecked,
+        ads.club = amenitiesParam.amenities[1].isChecked,
+        ads.playground = amenitiesParam.amenities[2].isChecked,
+        ads.gas = amenitiesParam.amenities[3].isChecked,
+        ads.sewage = amenitiesParam.amenities[4].isChecked,
+        ads.powerBackup = amenitiesParam.amenities[5].isChecked,
+        ads.liftService = amenitiesParam.amenities[6].isChecked,
+        ads.houseKeeper = amenitiesParam.amenities[7].isChecked,
+        ads.security = amenitiesParam.amenities[8].isChecked,
+        ads.carParking = amenitiesParam.amenities[9].isChecked,
+        ads.twoWheelerParking = amenitiesParam.amenities[10].isChecked,
+        ads.swimmingPool = amenitiesParam.amenities[11].isChecked,
+        ads.internetConnectivity = amenitiesParam.amenities[12].isChecked
 
 
     // validate
