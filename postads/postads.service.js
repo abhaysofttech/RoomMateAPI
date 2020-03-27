@@ -38,6 +38,8 @@ async function getAds() {
 }
 async function searchAds(req) {
     return await PostAds.find({
+        adsStatus: { $eq: 'active' },
+        adsApproved: { $eq: 'approved' },
         area: { $eq: req.body.area },
         gender: { $in: req.body.gender },
         roomType: { $in: req.body.roomType },
