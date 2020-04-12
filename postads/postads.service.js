@@ -56,16 +56,21 @@ async function getAdsGender(id) {
 
 async function getCities() {
     return await PostAds.distinct("city", { "city": { $nin: ["", null] } }).sort();
+    // return await PostAds.distinct("area", { "area": { $nin: ["", null] } }).sort();
+
 }
 async function getAreas(id) {
     return await PostAds.find({
-        $and: [
-            { $and: [{ "city": id }] },
-            //  { "zip" : zip }
+        $and: [{ $and: [{ "city": id }] },
+        //  { "zip" : zip }
         ]
     }, { "area": 1 })
 }
-
+// async function getAreas(id) {
+//     // return await PostAds.distinct("area", { $and: [{ $and: [{ "city": 'Pune' }] }] }, { "area": 1 }).sort()
+//     // console.log(PostAds.distinct("area", { $and: [{ "city": id }] }).sort());
+//     // return await PostAds.distinct("area", { $and: [{ "city": id }]}).sort();
+// }
 async function getAdsDetails(id) {
     return await PostAds.findById(id).select('-hash');
 }

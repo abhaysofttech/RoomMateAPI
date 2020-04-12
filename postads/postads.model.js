@@ -36,6 +36,7 @@ const PostAdsSchema = new mongoose.Schema({
     rentAmount: {type:Number, default: ''},
     depositAmount: {type:Number, default: ''},
     rentNegotiable: {type:Boolean, default:false},
+    availableDate: {type:Date, default: Date.now},
 
 
     airConditioner: {type:Boolean, default:false},
