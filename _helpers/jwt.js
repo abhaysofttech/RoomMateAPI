@@ -16,9 +16,10 @@ function jwt() {
             /^\/users\/phonenumber\/.*/,  //this is we used to pass the auth
             /^\/users\/emailcheck\/.*/,  //this is we used to pass the auth
             // '/postads/newads',
-           '/api/users',
+            //    '/api/users',
             '/api/users/authenticate',
-            '/api/users/register'
+            '/api/users/register',
+            '/api/users/appversions'
 
         ]
     });

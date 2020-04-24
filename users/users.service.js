@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
 const User = db.User;
+const appVersionDB = db.appVersion;
 
 module.exports = {
     authenticate,
@@ -15,7 +16,9 @@ module.exports = {
     getByUsername,
     create,
     update,
-    delete: _delete
+    delete: _delete,
+    getappVersion,
+    newappversion
 };
 
 async function authenticate({ phonenumber, password }) {
@@ -49,6 +52,40 @@ async function getAll() {
     return await User.find().select('-hash')
         .populate('profileimages');
 }
+async function getappVersion() {
+    return await appVersionDB.find().select('-hash')
+}
+
+
+async function newappversion(newVersion) {
+    const appVersion = await appVersionDB.findOne();
+    const version = new appVersionDB(newVersion);
+
+    if (appVersion != null && appVersion.version != newVersion.version) {
+        // copy userParam properties to user
+        appVersion.version = newVersion.version;
+        Object.assign(appVersion,appVersion);
+        appVersion.save().then(function (user) {
+            return user.version;
+        }).catch(function (err) {
+            return false;
+        });
+    }
+    else if(appVersion == null){
+        return version.save().then(function (user) {
+            const { _id } = user;
+           // console.log(`new RoomMate version: ${user.version}`);
+
+            return user.version;
+        }).catch(function (err) {
+            return false;
+        });
+    }
+    else{
+        return 'version is already exists'
+    }
+
+}
 
 async function phonenumber(contact) {
     return await User.findOne({ phonenumber: contact })
@@ -64,7 +101,7 @@ async function phonenumber(contact) {
                     };
                     res.json(response)
                 }
-                else{
+                else {
                     res.json("No record")
                 }
             }

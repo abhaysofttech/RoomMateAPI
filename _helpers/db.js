@@ -12,5 +12,7 @@ module.exports = {
     Images:require('../postads/images.model'),
     ProfileImages:require('../users/profile.model'),
     AdsVisits:require('../adsvisits/adsvisits.model'),
-    Request:require('../postads/request.model')
+    Request:require('../postads/request.model'),
+    appVersion: require('../users/appversion.model')
+
 };

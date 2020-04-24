@@ -12,6 +12,8 @@ const multer = require('multer')
 //routes
 router.get('/', getAll);
 router.post('/authenticate', authenticate);
+router.get('/appversions', getappVersion);
+
 router.post('/authenticatebyemail', authenticatebyemail);
 router.post('/register', register);
 router.get('/current', getCurrent);
@@ -20,6 +22,9 @@ router.get('/:username', getByUsername);
 router.delete('/:id', _delete);
 router.put('/update/:id', update);
 // router.get('/phonenumber/:phonenumber', phonenumber);
+router.post('/newappversion', newappversion);
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const { adsId } = req.body
@@ -77,6 +82,16 @@ router.post('/:id/profileimages', upload.single('data'), (req, res, next) => {
     })
 });
 
+function getappVersion(req, res, next){
+    userService.getappVersion()
+    .then(version => res.json(version))
+    .catch(err => console.log(err));
+}
+function newappversion(req, res, next){
+    userService.newappversion(req.body)
+    .then(version => res.json(version))
+    .catch(err => console.log(err));
+}
 function getAll(req, res, next) {
     userService.getAll()
         .then(users => res.json(users))
