@@ -51,6 +51,8 @@ const PostAdsSchema = new mongoose.Schema({
     carParking: {type:Boolean, default:false},
     twoWheelerParking: {type:Boolean, default:false},
     swimmingPool: {type:Boolean, default:false},
+    internetCom: {type:Boolean, default:false},
+    gatedsocity: {type:Boolean, default:false},
     internetConnectivity: {type:Boolean, default:false},
     postdate: {type:Date, default: Date.now}
    
