@@ -1,4 +1,5 @@
 require('rootpath')();
+
 const express = require('express');
 const path = require('path')
 const app = express();
@@ -7,6 +8,8 @@ const bodyParser= require('body-parser');
 const jwt = require('_helpers/jwt');
 const errorHandler = require('_helpers/error-handler');
 const passport = require('passport');
+
+
 const allowedOrigins = [
   'capacitor://localhost',
   'ionic://localhost',

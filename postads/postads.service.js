@@ -62,7 +62,7 @@ async function getCities() {
 async function getAreas(id) {
     return await PostAds.find({
         $and: [{ $and: [{ "city": id }] },
-        //  { "zip" : zip }
+            //  { "zip" : zip }
         ]
     }, { "area": 1 })
 }
@@ -116,8 +116,8 @@ async function updateRent(id, rentParam) {
 async function updateAmenities(id, amenitiesParam) {
     // const newads = new PostAds(adsDetail);
     const ads = await PostAds.findById(id);
-        ads.adsStatus = amenitiesParam.adsStatus,
-    ads.airConditioner = amenitiesParam.amenities[0].isChecked,
+    ads.adsStatus = amenitiesParam.adsStatus,
+        ads.airConditioner = amenitiesParam.amenities[0].isChecked,
         ads.club = amenitiesParam.amenities[1].isChecked,
         ads.playground = amenitiesParam.amenities[2].isChecked,
         ads.gas = amenitiesParam.amenities[3].isChecked,
@@ -176,7 +176,7 @@ async function index(req) {
 
 }
 
-function requested(requestId,requestDetail) {
+function requested(requestId, requestDetail) {
     const newRequest = new Request(requestDetail);
     newRequest.adsId = requestId;
     return newRequest.save().then(function (request) {

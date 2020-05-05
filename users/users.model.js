@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
     userCity:{type:String, default:''},
     mobileverify: {type:Boolean,default:false},
     emailverify: {type:Boolean,default:false},
+    emailverifyCode: {type:Number,default:''},
     date: {type:Date, default: Date.now},
     dob: {type:Date, required: true},
     userGender:{type:String, required: true}

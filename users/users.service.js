@@ -1,3 +1,4 @@
+require('dotenv').config();
 const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -5,8 +6,13 @@ const db = require('../_helpers/db');
 const User = db.User;
 const appVersionDB = db.appVersion;
 
+const otpGenerator = require('otp-generator');
+const nodemailer = require('nodemailer');
+
+
 module.exports = {
     authenticate,
+    authenticateByOTP,
     authenticatebyemail,
     getAll,
     phonenumber,
@@ -30,6 +36,16 @@ async function authenticate({ phonenumber, password }) {
         const token = jwt.sign({ sub: user.id }, config.secret);
         return {
             ...userWithoutHash,
+            token
+        };
+    }
+}
+
+async function authenticateByOTP(phonenumber) {
+    const user = await User.findOne({phonenumber}).populate('profileimages');
+    if (user) {
+        const token = jwt.sign({ sub: user.id }, config.secret);
+        return {
             token
         };
     }
@@ -168,16 +184,19 @@ async function create2(userParam) {
 
 }
 async function create(userParam) {
-    if (await User.findOne({ phonenumber: userParam.phonenumber })) {
-        throw 'Phone Number "' + userParam.phonenumber + '" is already register';
+    if (await User.findOne({ phonenumber: userParam.phonenumber }) || await User.findOne({ email: userParam.email })) {
+        throw 'Phone Number "' + userParam.phonenumber + '"<br/>or Email "' + userParam.email +' <br/>is already register';
     }
     const user = new User(userParam);
     if (userParam.password) {
         user.password = bcrypt.hashSync(userParam.password, 10);
     }
+    const otpGeneratorValue =  otpGenerator.generate(6, { alphabets:false,upperCase: false, specialChars: false })
+    user.emailverifyCode = otpGeneratorValue;
     return user.save().then(function (user) {
+        sendEmail(user)
         const { _id } = user;
-        console.log(`New room id: ${_id}`);
+        // console.log(`New room id: ${_id}`);
 
         return _id;
     }).catch(function (err) {
@@ -208,3 +227,88 @@ async function update(id, userParam) {
 async function _delete(id) {
     await User.findByIdAndRemove(id);
 }
+
+function sendEmail(user) {
+    // nodemailer configuration *************************
+
+    //Step 1
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.email, // generated ethereal user
+            pass: process.env.pass // generated ethereal password
+        }
+    });
+
+    //Step 2
+    // send mail with defined transport object
+    let mailOptions = {
+        from: 'roommatedekho@gmail.com', // sender address
+        to: user.email, // list of receivers
+        bcc: 'abhaysofttech@gmail.com',
+        subject: "Your verification code awaits with RoomMate", // Subject line
+        text: `${user.emailverifyCode} Your verification code awaits with RoomMate `, // plain text body
+        html: `Dear ${user.firstname}<br><br>
+        Thanks for signing up with <b>RoomMate Dekho</b> (http://www.roommatedekho.com)! With Room Mate you can now experience hassle free search for room mate & flats.
+        <br><br><br>Verify email id code is <span style="font-size:16px;"><b>${user.emailverifyCode}</b></span>
+        <br><br><br>Thanks,
+        <br>RoomMate Dekho Team.
+        <br><br><br>If you have any doubts, don't hesitate we are there. Write to us on - roommatedekho@gmail.com` // html body
+    };
+
+    //Step 3
+    transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+            console.log('Error Occurs' + err)
+        } else {
+            console.log('Email sent !!!!!!!!!!!')
+        }
+    });
+    //******************************************** */
+}
+
+async function reSendEmailVerify(user) {
+    // nodemailer configuration *************************
+
+    //Step 1
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.email, // generated ethereal user
+            pass: process.env.pass // generated ethereal password
+        }
+    });
+
+    //Step 2
+    // send mail with defined transport object
+    let mailOptions = {
+        from: 'roommatedekho@gmail.com', // sender address
+        to: user.email, // list of receivers
+        bcc: 'abhaysofttech@gmail.com',
+        subject: "Your verification code awaits with RoomMate", // Subject line
+        text: `${user.emailverifyCode} Your verification code awaits with RoomMate `, // plain text body
+        html: `Dear ${user.firstname}<br><br>
+        Thanks for signing up with <b>RoomMate Dekho</b> (http://www.roommatedekho.com)! With Room Mate you can now experience hassle free search for room mate & flats.
+        <br><br><br>Your Email Verify code is <span style="font-size:16px;"><b>${user.emailverifyCode}</b></span>
+        <br><br><br>Thanks,
+        <br>RoomMate Dekho Team.
+        <br><br><br>If you have any doubts, don't hesitate we are there. Write to us on - roommatedekho@gmail.com` // html body
+    };
+
+    //Step 3
+    await transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+            console.log('Error Occurs' + err)
+        } else {
+            console.log('Email sent !!!!!!!!!!!')
+        }
+    });
+    //******************************************** */
+}
+
